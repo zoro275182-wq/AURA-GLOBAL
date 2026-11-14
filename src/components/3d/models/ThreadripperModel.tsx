@@ -3,6 +3,9 @@ import { useFrame } from '@react-three/fiber';
 import { Float, Text, useGLTF } from '@react-three/drei';
 import * as THREE from 'three';
 import { MeshoptDecoder } from 'three/examples/jsm/libs/meshopt_decoder.module.js';
+import { getAssetPath } from '../../../utils/assetPath';
+
+const CPU_MODEL_URL = getAssetPath('models/cpu.glb');
 
 interface ModelProps {
   wireframe?: boolean;
@@ -13,7 +16,7 @@ export const ThreadripperModel: React.FC<ModelProps> = ({ wireframe = false }) =
   const groupRef = useRef<THREE.Group>(null);
 
   const gltf = useGLTF(
-    '/models/cpu.glb',
+    CPU_MODEL_URL,
     false,
     false,
     (loader) => {
@@ -217,4 +220,4 @@ export const ThreadripperModel: React.FC<ModelProps> = ({ wireframe = false }) =
   );
 };
 
-useGLTF.preload('/models/cpu.glb');
+useGLTF.preload(CPU_MODEL_URL);

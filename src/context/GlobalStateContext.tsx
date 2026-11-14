@@ -3,6 +3,7 @@ import { CurrencyCode, CurrencyRate, CartItem, TrackingOrder, UserProfile, Asset
 import { TRACKING_DATABASE } from '../data/trackingData';
 import { CATALOG_ITEMS } from '../data/catalogData';
 import { Language, Translations, TRANSLATIONS } from '../i18n/translations';
+import { getAssetPath } from '../utils/assetPath';
 
 const CURRENCY_CONFIG: Record<CurrencyCode, CurrencyRate> = {
   USD: { symbol: '$', rate: 1.0, prefix: '$' },
@@ -67,7 +68,7 @@ export const GlobalStateProvider: React.FC<{ children: ReactNode }> = ({ childre
       categoryLabel: 'Flagship PC Hardware',
       priceUsd: 2399,
       quantity: 1,
-      image: '/images/rtx5090.jpg',
+      image: getAssetPath('images/rtx5090.jpg'),
       originHub: 'Silicon Valley Hub (SFO)',
       deliveryDays: '4-7 Days Air'
     }

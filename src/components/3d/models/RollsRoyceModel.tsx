@@ -2,6 +2,9 @@ import React, { useMemo, useRef } from 'react';
 import { useFrame } from '@react-three/fiber';
 import { Float, useGLTF } from '@react-three/drei';
 import * as THREE from 'three';
+import { getAssetPath } from '../../../utils/assetPath';
+
+const LUXURY_CAR_MODEL_URL = getAssetPath('models/luxury_car.glb');
 
 interface ModelProps {
   wireframe?: boolean;
@@ -10,7 +13,7 @@ interface ModelProps {
 // Authentic High-Poly BMW M Performance M4 Competition
 export const RollsRoyceModel: React.FC<ModelProps> = ({ wireframe = false }) => {
   const groupRef = useRef<THREE.Group>(null);
-  const gltf = useGLTF('/models/luxury_car.glb');
+  const gltf = useGLTF(LUXURY_CAR_MODEL_URL);
 
   const clonedScene = useMemo(() => {
     const clone = gltf.scene.clone(true);
@@ -120,4 +123,4 @@ export const RollsRoyceModel: React.FC<ModelProps> = ({ wireframe = false }) => 
   );
 };
 
-useGLTF.preload('/models/luxury_car.glb');
+useGLTF.preload(LUXURY_CAR_MODEL_URL);

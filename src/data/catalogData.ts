@@ -1,4 +1,5 @@
 import { AssetItem } from '../types';
+import { getAssetPath } from '../utils/assetPath';
 
 export const CATALOG_ITEMS: AssetItem[] = [
   // ==========================================
@@ -18,7 +19,7 @@ export const CATALOG_ITEMS: AssetItem[] = [
     deliveryDays: '4-7 Days Air',
     rating: 4.99,
     featured: true,
-    image: '/images/rtx5090.jpg',
+    image: getAssetPath('images/rtx5090.jpg'),
     description: 'The pinnacle of neural compute. 32GB GDDR7, 28,160 CUDA cores, dual vapor chamber with liquid metal thermal compound and iridescent gunmetal shroud.',
     specs: [
       { label: 'Architecture', value: 'Blackwell GB202' },
@@ -46,7 +47,7 @@ export const CATALOG_ITEMS: AssetItem[] = [
     deliveryDays: '5-8 Days Priority Air',
     rating: 5.0,
     featured: true,
-    image: '/images/threadripper.jpg',
+    image: getAssetPath('images/threadripper.jpg'),
     description: 'Supreme workstation processor with 96 Zen 4 cores, 192 threads, 384MB L3 cache, and 128 PCIe 5.0 lanes. Engineered for extreme generative AI modeling, real-time 8K rendering, and deep learning compute.',
     specs: [
       { label: 'Cores / Threads', value: '96 Cores / 192 Threads' },
@@ -606,7 +607,7 @@ export const CATALOG_ITEMS: AssetItem[] = [
     deliveryDays: '5-8 Days Priority Airfreight',
     rating: 4.98,
     featured: true,
-    image: '/images/gallardo.jpg',
+    image: getAssetPath('images/gallardo.jpg'),
     description: 'Iconic mid-engine Italian raging bull with an intoxicating 5.2L atmospheric V10 screaming to 8,000 RPM. Permanent all-wheel drive, carbon-ceramic brakes, and Apollo titanium forged wheels.',
     specs: [
       { label: 'Engine', value: '5.2L Naturally Aspirated V10 (90°)' },

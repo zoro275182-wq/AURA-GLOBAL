@@ -3,6 +3,9 @@ import { useFrame } from '@react-three/fiber';
 import { Float, Text, useGLTF } from '@react-three/drei';
 import * as THREE from 'three';
 import { MeshoptDecoder } from 'three/examples/jsm/libs/meshopt_decoder.module.js';
+import { getAssetPath } from '../../../utils/assetPath';
+
+const GPU_MODEL_URL = getAssetPath('models/gpu.glb');
 
 interface ModelProps {
   wireframe?: boolean;
@@ -15,7 +18,7 @@ export const RTX5090Model: React.FC<ModelProps> = ({ wireframe = false }) => {
   const fan2Ref = useRef<THREE.Object3D | null>(null);
 
   const gltf = useGLTF(
-    '/models/gpu.glb',
+    GPU_MODEL_URL,
     false,
     false,
     (loader) => {
@@ -134,4 +137,4 @@ export const RTX5090Model: React.FC<ModelProps> = ({ wireframe = false }) => {
   );
 };
 
-useGLTF.preload('/models/gpu.glb');
+useGLTF.preload(GPU_MODEL_URL);

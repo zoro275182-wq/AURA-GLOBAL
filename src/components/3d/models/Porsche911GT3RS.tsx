@@ -2,6 +2,9 @@ import React, { useMemo, useRef } from 'react';
 import { useFrame } from '@react-three/fiber';
 import { Float, useGLTF } from '@react-three/drei';
 import * as THREE from 'three';
+import { getAssetPath } from '../../../utils/assetPath';
+
+const SUPERCAR_MODEL_URL = getAssetPath('models/supercar.glb');
 
 interface ModelProps {
   wireframe?: boolean;
@@ -10,7 +13,7 @@ interface ModelProps {
 // Authentic High-Poly Exotic Sports Car with realistic clearcoat lacquer
 export const Porsche911GT3RS: React.FC<ModelProps> = ({ wireframe = false }) => {
   const groupRef = useRef<THREE.Group>(null);
-  const gltf = useGLTF('/models/supercar.glb');
+  const gltf = useGLTF(SUPERCAR_MODEL_URL);
 
   const clonedScene = useMemo(() => {
     const clone = gltf.scene.clone(true);
@@ -107,4 +110,4 @@ export const Porsche911GT3RS: React.FC<ModelProps> = ({ wireframe = false }) => 
   );
 };
 
-useGLTF.preload('/models/supercar.glb');
+useGLTF.preload(SUPERCAR_MODEL_URL);
