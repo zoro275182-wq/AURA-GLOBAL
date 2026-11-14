@@ -68,7 +68,7 @@ export const GlobalStateProvider: React.FC<{ children: ReactNode }> = ({ childre
       categoryLabel: 'Flagship PC Hardware',
       priceUsd: 2399,
       quantity: 1,
-      image: getAssetPath('images/rtx5090.jpg'),
+      image: 'https://images.unsplash.com/photo-1587202372775-e229f172b9d7?auto=format&fit=crop&w=1000&q=80',
       originHub: 'Silicon Valley Hub (SFO)',
       deliveryDays: '4-7 Days Air'
     }

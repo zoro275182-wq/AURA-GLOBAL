@@ -1,151 +1,130 @@
 import React, { useMemo, useRef } from 'react';
 import { useFrame } from '@react-three/fiber';
-import { Float, useGLTF } from '@react-three/drei';
+import { Float } from '@react-three/drei';
 import * as THREE from 'three';
-import { MeshoptDecoder } from 'three/examples/jsm/libs/meshopt_decoder.module.js';
-import { getAssetPath } from '../../../utils/assetPath';
-
-const CPU_MODEL_URL = getAssetPath('models/cpu.glb');
 
 interface ModelProps {
   wireframe?: boolean;
 }
 
-// Authentic High-Poly AMD Ryzen Threadripper PRO 7995WX (sTR5 Workstation Architecture)
+// 100% Procedural AMD Ryzen Threadripper PRO 7995WX (sTR5 Workstation Architecture)
+// Zero external .glb downloads, pure Three.js standard geometries and physical materials.
 export const ThreadripperModel: React.FC<ModelProps> = ({ wireframe = false }) => {
   const groupRef = useRef<THREE.Group>(null);
 
-  const gltf = useGLTF(
-    CPU_MODEL_URL,
-    false,
-    false,
-    (loader) => {
-      loader.setMeshoptDecoder(MeshoptDecoder);
+  useFrame((_, delta) => {
+    if (groupRef.current) {
+      groupRef.current.rotation.y += delta * 0.25;
     }
-  );
+  });
 
-  const clonedScene = useMemo(() => {
-    const clone = gltf.scene.clone(true);
+  const materials = useMemo(() => {
+    const wireMat = new THREE.MeshBasicMaterial({ color: '#06B6D4', wireframe: true });
 
     // Nickel-plated copper Integrated Heat Spreader (IHS)
-    const nickelIhsMat = new THREE.MeshPhysicalMaterial({
-      color: '#E2E8F0',
+    const nickelIhs = new THREE.MeshPhysicalMaterial({
+      color: '#CBD5E1',
       metalness: 0.95,
       roughness: 0.16,
       clearcoat: 0.9,
-      clearcoatRoughness: 0.08,
-      reflectivity: 0.96,
-      iridescence: 0.25,
-      iridescenceIOR: 1.35
+      reflectivity: 0.95
     });
 
-    // Dark Emerald / Obsidian Enterprise Multi-Layer PCB Substrate
-    const pcbMat = new THREE.MeshStandardMaterial({
-      color: '#061610',
-      roughness: 0.45,
-      metalness: 0.15
+    // Dark Emerald High-Density PCB Substrate
+    const pcb = new THREE.MeshStandardMaterial({
+      color: '#062016',
+      roughness: 0.4,
+      metalness: 0.2
     });
 
-    // Pure 24K Gold Pin-1 Alignment & Contacts
-    const goldMat = new THREE.MeshStandardMaterial({
+    // Gold Pin-1 & Contacts
+    const gold = new THREE.MeshStandardMaterial({
       color: '#F59E0B',
       metalness: 0.98,
       roughness: 0.1
     });
 
-    // SMD Ceramic Capacitor Bodies
-    const ceramicMat = new THREE.MeshStandardMaterial({
-      color: '#452A18',
-      roughness: 0.55,
-      metalness: 0.1
+    // SMD Capacitors
+    const ceramic = new THREE.MeshStandardMaterial({
+      color: '#5C381E',
+      roughness: 0.5,
+      metalness: 0.15
     });
 
-    // Silver Alloy SMD Solder Terminals
-    const solderMat = new THREE.MeshStandardMaterial({
-      color: '#CBD5E1',
-      roughness: 0.25,
-      metalness: 0.92
+    // Dark Laser-etched Inscriptions Plane
+    const darkLaser = new THREE.MeshStandardMaterial({
+      color: '#1E293B',
+      metalness: 0.5,
+      roughness: 0.3
     });
 
-    // Wireframe Hologram Material
-    const wireframeMat = new THREE.MeshBasicMaterial({
-      color: '#06B6D4',
-      wireframe: true
+    // AMD Crimson Orange Accent
+    const amdOrange = new THREE.MeshStandardMaterial({
+      color: '#EA580C',
+      metalness: 0.4,
+      roughness: 0.2
     });
 
-    clone.traverse((child) => {
-      if ((child as THREE.Mesh).isMesh) {
-        const mesh = child as THREE.Mesh;
-        mesh.castShadow = true;
-        mesh.receiveShadow = true;
-
-        if (wireframe) {
-          mesh.material = wireframeMat;
-        } else {
-          const mat = mesh.material as any;
-          const matName = (mat?.name || '').toLowerCase();
-
-          // Preserve LGA pin socket texture with gold shine
-          if (mat?.map || matName.includes('pads')) {
-            mat.metalness = 0.9;
-            mat.roughness = 0.25;
-            mat.needsUpdate = true;
-          } else if (matName.includes('ihs') || matName.includes('nickel')) {
-            mesh.material = nickelIhsMat;
-          } else if (matName.includes('pcb')) {
-            mesh.material = pcbMat;
-          } else if (matName.includes('gold')) {
-            mesh.material = goldMat;
-          } else if (matName.includes('ceramic')) {
-            mesh.material = ceramicMat;
-          } else if (matName.includes('solder')) {
-            mesh.material = solderMat;
-          } else {
-            mesh.material = nickelIhsMat;
-          }
-        }
-      }
-    });
-
-    return clone;
-  }, [gltf, wireframe]);
-
-  useFrame((_, delta) => {
-    if (groupRef.current) {
-      groupRef.current.rotation.y += delta * 0.24;
-    }
-  });
+    return {
+      nickelIhs: wireframe ? wireMat : nickelIhs,
+      pcb: wireframe ? wireMat : pcb,
+      gold: wireframe ? wireMat : gold,
+      ceramic: wireframe ? wireMat : ceramic,
+      darkLaser: wireframe ? wireMat : darkLaser,
+      amdOrange: wireframe ? wireMat : amdOrange
+    };
+  }, [wireframe]);
 
   return (
-    <Float speed={1.8} rotationIntensity={0.16} floatIntensity={0.2}>
-      <group
-        ref={groupRef}
-        scale={[50, 50, 50]}
-        rotation={[-Math.PI / 4.5, Math.PI / 5, 0]}
-        position={[0, 0, 0]}
-      >
-        <primitive object={clonedScene} />
+    <Float speed={1.5} rotationIntensity={0.15} floatIntensity={0.25}>
+      <group ref={groupRef} scale={[30, 30, 30]} rotation={[-Math.PI / 4, 0, 0]}>
+        {/* PCB Substrate base: sTR5 large socket form-factor (58.5mm x 75.4mm) */}
+        <mesh position={[0, 0, -0.001]} material={materials.pcb}>
+          <boxGeometry args={[0.0754, 0.0585, 0.002]} />
+        </mesh>
 
-        {/* 
-          Authentic IHS lid details (Pin-1 alignment marker & DataMatrix security matrix).
-          Typography is rendered cleanly in the floating HTML/Tailwind overlay above the canvas.
-        */}
-        <group position={[0, 0, 0.00512]}>
-          {/* Micro 2D DataMatrix Security QR Square in top-right corner */}
-          <mesh position={[0.0115, 0.0095, 0.00005]}>
-            <planeGeometry args={[0.0032, 0.0032]} />
-            <meshBasicMaterial color="#1E293B" />
-          </mesh>
+        {/* Nickel-Plated Copper IHS Lid */}
+        <mesh position={[0, 0, 0.0018]} material={materials.nickelIhs}>
+          <boxGeometry args={[0.068, 0.051, 0.0036]} />
+        </mesh>
 
-          {/* Authentic Pin-1 Gold Alignment Triangle Marker in bottom-left corner */}
-          <mesh position={[-0.0125, -0.0125, 0.00005]} rotation={[0, 0, -Math.PI / 4]}>
-            <coneGeometry args={[0.0016, 0.0022, 3]} />
-            <meshBasicMaterial color="#F59E0B" />
-          </mesh>
-        </group>
+        {/* Center Recessed Engraving Area on IHS */}
+        <mesh position={[0, 0, 0.00365]} material={materials.darkLaser}>
+          <boxGeometry args={[0.054, 0.038, 0.0001]} />
+        </mesh>
+
+        {/* Architectural Threadripper Signature Bars on IHS */}
+        <mesh position={[0, 0.006, 0.00375]} material={materials.amdOrange}>
+          <boxGeometry args={[0.038, 0.004, 0.0001]} />
+        </mesh>
+        <mesh position={[0, -0.002, 0.00375]} material={materials.nickelIhs}>
+          <boxGeometry args={[0.032, 0.0025, 0.0001]} />
+        </mesh>
+        <mesh position={[0, -0.008, 0.00375]} material={materials.gold}>
+          <boxGeometry args={[0.024, 0.0018, 0.0001]} />
+        </mesh>
+
+        {/* Perimeter SMD Ceramic Capacitors on PCB edge */}
+        {[-0.034, 0.034].map((x, idx) => (
+          <group key={idx} position={[x, 0, 0.0008]}>
+            {[-0.02, -0.01, 0, 0.01, 0.02].map((y, sIdx) => (
+              <mesh key={sIdx} position={[0, y, 0]} material={materials.ceramic}>
+                <boxGeometry args={[0.002, 0.004, 0.0014]} />
+              </mesh>
+            ))}
+          </group>
+        ))}
+
+        {/* Pin-1 Gold Alignment Corner Marker */}
+        <mesh position={[-0.032, -0.024, 0.0005]} material={materials.gold}>
+          <cylinderGeometry args={[0.0015, 0.0015, 0.0015, 3]} />
+        </mesh>
+
+        {/* LGA Contact Gold Pads on bottom surface */}
+        <mesh position={[0, 0, -0.0021]} material={materials.gold}>
+          <boxGeometry args={[0.071, 0.054, 0.0002]} />
+        </mesh>
       </group>
     </Float>
   );
 };
-
-useGLTF.preload(CPU_MODEL_URL);

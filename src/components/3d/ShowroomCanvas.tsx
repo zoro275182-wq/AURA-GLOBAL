@@ -126,6 +126,7 @@ export const ShowroomCanvas: React.FC<ShowroomCanvasProps> = ({
       <CanvasErrorBoundary>
         <div className="w-full h-full cursor-grab active:cursor-grabbing">
           <Canvas
+            dpr={[1, 1.5]}
             camera={{ position: [0, 1.8, 6.2], fov: 42 }}
             gl={{ antialias: true, alpha: true, powerPreference: 'high-performance' }}
           >

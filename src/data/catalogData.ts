@@ -19,7 +19,7 @@ export const CATALOG_ITEMS: AssetItem[] = [
     deliveryDays: '4-7 Days Air',
     rating: 4.99,
     featured: true,
-    image: getAssetPath('images/rtx5090.jpg'),
+    image: 'https://images.unsplash.com/photo-1587202372775-e229f172b9d7?auto=format&fit=crop&w=1000&q=80',
     description: 'The pinnacle of neural compute. 32GB GDDR7, 28,160 CUDA cores, dual vapor chamber with liquid metal thermal compound and iridescent gunmetal shroud.',
     specs: [
       { label: 'Architecture', value: 'Blackwell GB202' },
@@ -47,7 +47,7 @@ export const CATALOG_ITEMS: AssetItem[] = [
     deliveryDays: '5-8 Days Priority Air',
     rating: 5.0,
     featured: true,
-    image: getAssetPath('images/threadripper.jpg'),
+    image: 'https://images.unsplash.com/photo-1591799264318-7e6ef8ddb7ea?auto=format&fit=crop&w=1000&q=80',
     description: 'Supreme workstation processor with 96 Zen 4 cores, 192 threads, 384MB L3 cache, and 128 PCIe 5.0 lanes. Engineered for extreme generative AI modeling, real-time 8K rendering, and deep learning compute.',
     specs: [
       { label: 'Cores / Threads', value: '96 Cores / 192 Threads' },
@@ -607,7 +607,7 @@ export const CATALOG_ITEMS: AssetItem[] = [
     deliveryDays: '5-8 Days Priority Airfreight',
     rating: 4.98,
     featured: true,
-    image: getAssetPath('images/gallardo.jpg'),
+    image: 'https://images.unsplash.com/photo-1544829099-b9a0c07fad1a?auto=format&fit=crop&w=1200&q=80',
     description: 'Iconic mid-engine Italian raging bull with an intoxicating 5.2L atmospheric V10 screaming to 8,000 RPM. Permanent all-wheel drive, carbon-ceramic brakes, and Apollo titanium forged wheels.',
     specs: [
       { label: 'Engine', value: '5.2L Naturally Aspirated V10 (90°)' },
