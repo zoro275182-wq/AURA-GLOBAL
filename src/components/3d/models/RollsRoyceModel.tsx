@@ -41,19 +41,25 @@ export const RollsRoyceModel: React.FC<ModelProps> = ({ wireframe = false }) => 
       color: '#E0F2FE',
       emissive: '#38BDF8',
       emissiveIntensity: 0.9,
-      transmission: 0.85,
-      transparent: true,
-      opacity: 0.9,
-      roughness: 0.05
+      transmission: 0.9,
+      roughness: 0.05,
+      metalness: 0.1,
+      ior: 1.5,
+      reflectivity: 0.9,
+      clearcoat: 1.0,
+      transparent: true
     });
 
     // Smoked Privacy Glass
     const smokedGlass = new THREE.MeshPhysicalMaterial({
       color: '#0A111E',
-      transmission: 0.8,
-      transparent: true,
-      opacity: 0.85,
-      roughness: 0.04
+      transmission: 0.9,
+      roughness: 0.05,
+      metalness: 0.1,
+      ior: 1.5,
+      reflectivity: 0.9,
+      clearcoat: 1.0,
+      transparent: true
     });
 
     // Wireframe Material

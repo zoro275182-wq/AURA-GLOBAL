@@ -1,6 +1,6 @@
 import React, { useMemo, useRef } from 'react';
 import { useFrame } from '@react-three/fiber';
-import { Float, Text, useGLTF } from '@react-three/drei';
+import { Float, useGLTF } from '@react-three/drei';
 import * as THREE from 'three';
 import { MeshoptDecoder } from 'three/examples/jsm/libs/meshopt_decoder.module.js';
 import { getAssetPath } from '../../../utils/assetPath';
@@ -116,18 +116,12 @@ export const RTX5090Model: React.FC<ModelProps> = ({ wireframe = false }) => {
         <group position={[-0.0645, 0.0198, -0.0539]}>
           <primitive object={clonedScene} />
 
-          {/* Illuminated LED GEFORCE RTX 5090 emblem directly flush on the side metal bezel */}
+          {/* Illuminated LED accent flush on side metal bezel (Typography rendered in HTML overlay) */}
           <group position={[0.0645, -0.0198, 0.1246]}>
-            <Text
-              position={[0, 0, 0.0005]}
-              fontSize={0.011}
-              letterSpacing={0.14}
-              color="#F8FAFC"
-              anchorX="center"
-              anchorY="middle"
-            >
-              GEFORCE RTX 5090
-            </Text>
+            <mesh position={[0, 0, 0.0005]}>
+              <boxGeometry args={[0.08, 0.008, 0.001]} />
+              <meshBasicMaterial color="#E2E8F0" />
+            </mesh>
             {/* Soft illuminated glow on side emblem */}
             <pointLight position={[0, 0, 0.008]} intensity={0.5} color="#A7F3D0" distance={0.3} />
           </group>

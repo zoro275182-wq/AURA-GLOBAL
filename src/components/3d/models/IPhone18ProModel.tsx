@@ -111,15 +111,16 @@ export const IPhone18ProModel: React.FC<ModelProps> = ({ wireframe = false }) =>
       roughness: 0.6
     });
 
-    // 7. Anti-Reflective Optical Sapphire Lens Element (Violet/Cyan AR Coating)
+    // 7. Anti-Reflective Optical Sapphire Lens Element (Ultra-Clean Glass Shader)
     const opticalGlass = new THREE.MeshPhysicalMaterial({
       color: '#02050E',
-      transmission: 0.65,
-      roughness: 0.02,
-      ior: 1.77,
+      transmission: 0.9,
+      roughness: 0.05,
+      metalness: 0.1,
+      ior: 1.5,
+      reflectivity: 0.9,
       clearcoat: 1.0,
-      iridescence: 1.0,
-      iridescenceIOR: 1.6
+      transparent: true
     });
 
     // 8. Authentic Mirror-Chrome Inlaid Apple Logo

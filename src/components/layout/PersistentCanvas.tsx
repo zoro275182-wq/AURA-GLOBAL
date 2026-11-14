@@ -1,8 +1,9 @@
 import React, { useRef, useMemo } from 'react';
 import { useLocation } from 'react-router-dom';
 import { Canvas, useFrame } from '@react-three/fiber';
-import { Float, MeshDistortMaterial } from '@react-three/drei';
+import { Float } from '@react-three/drei';
 import * as THREE from 'three';
+import { CanvasErrorBoundary } from '../3d/CanvasErrorBoundary';
 
 interface SceneState {
   sphereDistort: number;
@@ -81,17 +82,15 @@ const BackgroundSphere: React.FC<{ pathname: string }> = ({ pathname }) => {
     <Float speed={2} rotationIntensity={0.3} floatIntensity={0.4}>
       <mesh ref={meshRef} position={[pathname === '/' ? 1.8 : 0, 0, -1]}>
         <sphereGeometry args={[1.6, 64, 64]} />
-        <MeshDistortMaterial
+        <meshPhysicalMaterial
           color={targetConfig.primaryColor}
           roughness={0.15}
           metalness={0.9}
           clearcoat={1.0}
           clearcoatRoughness={0.1}
-          distort={targetConfig.sphereDistort}
-          speed={targetConfig.sphereSpeed}
           transmission={0.4}
           transparent
-          opacity={pathname === '/showroom' ? 0.15 : 0.65}
+          opacity={0.65}
         />
       </mesh>
     </Float>
@@ -142,20 +141,27 @@ export const PersistentCanvas: React.FC = () => {
   const currentPath = location.pathname;
   const config = ROUTE_CONFIG[currentPath] || ROUTE_CONFIG['/'];
 
+  // Do not mount on showroom to avoid 2 concurrent WebGL contexts
+  if (currentPath === '/showroom') {
+    return null;
+  }
+
   return (
     <div className="fixed inset-0 pointer-events-none z-0 overflow-hidden">
-      <Canvas
-        camera={{ position: [0, 0, config.cameraZ], fov: 45 }}
-        gl={{ antialias: true, alpha: true }}
-      >
-        <ambientLight intensity={0.5} />
-        <directionalLight position={[10, 10, 5]} intensity={1.5} color={config.primaryColor} />
-        <directionalLight position={[-10, -10, -5]} intensity={1.5} color={config.secondaryColor} />
-        <pointLight position={[0, 0, 2]} intensity={1.2} color="#FFFFFF" />
+      <CanvasErrorBoundary fallback={null}>
+        <Canvas
+          camera={{ position: [0, 0, config.cameraZ], fov: 45 }}
+          gl={{ antialias: true, alpha: true }}
+        >
+          <ambientLight intensity={0.5} />
+          <directionalLight position={[10, 10, 5]} intensity={1.5} color={config.primaryColor} />
+          <directionalLight position={[-10, -10, -5]} intensity={1.5} color={config.secondaryColor} />
+          <pointLight position={[0, 0, 2]} intensity={1.2} color="#FFFFFF" />
 
-        <BackgroundSphere pathname={currentPath} />
-        <AmbientDust />
-      </Canvas>
+          <BackgroundSphere pathname={currentPath} />
+          <AmbientDust />
+        </Canvas>
+      </CanvasErrorBoundary>
     </div>
   );
 };

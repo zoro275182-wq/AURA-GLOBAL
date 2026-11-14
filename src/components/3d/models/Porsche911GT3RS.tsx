@@ -32,12 +32,13 @@ export const Porsche911GT3RS: React.FC<ModelProps> = ({ wireframe = false }) => 
     // Glasshouse Tinted Glass
     const windowGlass = new THREE.MeshPhysicalMaterial({
       color: '#0B0F17',
-      transmission: 0.75,
-      transparent: true,
-      opacity: 0.88,
-      roughness: 0.04,
-      ior: 1.52,
-      clearcoat: 1.0
+      transmission: 0.9,
+      roughness: 0.05,
+      metalness: 0.1,
+      ior: 1.5,
+      reflectivity: 0.9,
+      clearcoat: 1.0,
+      transparent: true
     });
 
     // Magnesium Wheels / Dark Metal

@@ -35,12 +35,13 @@ export const ModernVillaModel: React.FC<ModelProps> = ({ wireframe = false }) =>
 
   const architecturalGlassMat = new THREE.MeshPhysicalMaterial({
     color: wireframe ? '#06b6d4' : '#0B1524',
-    transmission: 0.88,
-    transparent: true,
-    opacity: 0.9,
-    roughness: 0.04,
-    ior: 1.52,
+    transmission: 0.9,
+    roughness: 0.05,
+    metalness: 0.1,
+    ior: 1.5,
+    reflectivity: 0.9,
     clearcoat: 1.0,
+    transparent: true,
     wireframe
   });
 
@@ -51,12 +52,13 @@ export const ModernVillaModel: React.FC<ModelProps> = ({ wireframe = false }) =>
 
   const poolWaterMat = new THREE.MeshPhysicalMaterial({
     color: wireframe ? '#06b6d4' : '#06B6D4',
-    transmission: 0.75,
-    transparent: true,
-    opacity: 0.85,
-    roughness: 0.08,
-    ior: 1.333,
+    transmission: 0.9,
+    roughness: 0.05,
+    metalness: 0.1,
+    ior: 1.5,
+    reflectivity: 0.9,
     clearcoat: 1.0,
+    transparent: true,
     wireframe
   });
 

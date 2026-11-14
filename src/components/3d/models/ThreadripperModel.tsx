@@ -1,6 +1,6 @@
 import React, { useMemo, useRef } from 'react';
 import { useFrame } from '@react-three/fiber';
-import { Float, Text, useGLTF } from '@react-three/drei';
+import { Float, useGLTF } from '@react-three/drei';
 import * as THREE from 'three';
 import { MeshoptDecoder } from 'three/examples/jsm/libs/meshopt_decoder.module.js';
 import { getAssetPath } from '../../../utils/assetPath';
@@ -127,82 +127,10 @@ export const ThreadripperModel: React.FC<ModelProps> = ({ wireframe = false }) =
         <primitive object={clonedScene} />
 
         {/* 
-          Authentic Laser-Engraved Typography placed DIRECTLY onto the nickel IHS lid surface (Z = 0.00512).
-          Zero floating gap — perfectly flush with the metal plate.
+          Authentic IHS lid details (Pin-1 alignment marker & DataMatrix security matrix).
+          Typography is rendered cleanly in the floating HTML/Tailwind overlay above the canvas.
         */}
         <group position={[0, 0, 0.00512]}>
-          {/* Top Line: AMD RYZEN */}
-          <Text
-            position={[0, 0.0072, 0]}
-            fontSize={0.0028}
-            letterSpacing={0.14}
-            color="#0F172A"
-            anchorX="center"
-            anchorY="middle"
-          >
-            AMD RYZEN™
-          </Text>
-
-          {/* Signature Line: THREADRIPPER in AMD Crimson-Orange */}
-          <Text
-            position={[0, 0.0028, 0]}
-            fontSize={0.0035}
-            letterSpacing={0.08}
-            color="#EA580C"
-            anchorX="center"
-            anchorY="middle"
-          >
-            THREADRIPPER™
-          </Text>
-
-          {/* Model Subheading: PRO 7995WX */}
-          <Text
-            position={[0, -0.0016, 0]}
-            fontSize={0.0024}
-            letterSpacing={0.12}
-            color="#1E293B"
-            anchorX="center"
-            anchorY="middle"
-          >
-            PRO 7995WX
-          </Text>
-
-          {/* Core Specs Laser Etching */}
-          <Text
-            position={[0, -0.0052, 0]}
-            fontSize={0.0014}
-            letterSpacing={0.08}
-            color="#475569"
-            anchorX="center"
-            anchorY="middle"
-          >
-            96 CORES • 192 THREADS • 5.1 GHz BOOST
-          </Text>
-
-          {/* Socket & TDP Specifications */}
-          <Text
-            position={[0, -0.0078, 0]}
-            fontSize={0.0012}
-            letterSpacing={0.07}
-            color="#64748B"
-            anchorX="center"
-            anchorY="middle"
-          >
-            sTR5 SOCKET • 350W TDP • DIFFUSED IN USA
-          </Text>
-
-          {/* OPN Serial & Batch ID Laser Matrix Code */}
-          <Text
-            position={[0, -0.0104, 0]}
-            fontSize={0.0010}
-            letterSpacing={0.06}
-            color="#94A3B8"
-            anchorX="center"
-            anchorY="middle"
-          >
-            OPN 100-000000884 • YD7995WWA8884 • LOT 2411A
-          </Text>
-
           {/* Micro 2D DataMatrix Security QR Square in top-right corner */}
           <mesh position={[0.0115, 0.0095, 0.00005]}>
             <planeGeometry args={[0.0032, 0.0032]} />
