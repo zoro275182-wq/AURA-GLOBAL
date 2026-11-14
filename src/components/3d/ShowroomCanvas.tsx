@@ -1,6 +1,6 @@
 import React, { Suspense, useState, useEffect } from 'react';
 import { Canvas } from '@react-three/fiber';
-import { OrbitControls, ContactShadows, Html, Environment, Lightformer } from '@react-three/drei';
+import { OrbitControls, ContactShadows, Html } from '@react-three/drei';
 import { RTX5090Model } from './models/RTX5090Model';
 import { IPhone18ProModel } from './models/IPhone18ProModel';
 import { RollsRoyceModel } from './models/RollsRoyceModel';
@@ -54,44 +54,35 @@ export const ShowroomCanvas: React.FC<ShowroomCanvasProps> = ({
         gl={{ antialias: true, alpha: true, powerPreference: 'high-performance' }}
       >
         {/* Studio Lighting Rig */}
-        <ambientLight intensity={isWireframe ? 0.4 : 1.1} />
+        <ambientLight intensity={isWireframe ? 0.4 : 1.2} />
 
-        {/* Key Light (Cyan Iridescent Tint) */}
+        {/* Key Light (Crisp White Softbox) */}
         <directionalLight
           position={[6, 9, 6]}
-          intensity={isWireframe ? 0.8 : 2.8}
-          color="#E0F2FE"
+          intensity={isWireframe ? 0.8 : 3.0}
+          color="#F8FAFC"
           castShadow
         />
 
-        {/* Rim / Backlight (Electric Violet Glow) */}
+        {/* Rim / Backlight (Electric Violet Sheen) */}
         <directionalLight
           position={[-6, 6, -6]}
-          intensity={isWireframe ? 1.6 : 3.0}
+          intensity={isWireframe ? 1.6 : 3.2}
           color="#8B5CF6"
         />
 
-        {/* Fill Underlight (Cyber Cyan) */}
+        {/* Fill Underlight (Cyan Specular) */}
         <directionalLight
           position={[0, -4, 4]}
-          intensity={isWireframe ? 1.2 : 1.4}
+          intensity={isWireframe ? 1.2 : 1.6}
           color="#06B6D4"
         />
 
-        {/* Top Accent Light (Rose Pearl) */}
-        <pointLight position={[modelOffsetX, 5, 0]} intensity={2.0} color="#EC4899" />
+        {/* Top Accent Light (Rose Specular Highlight) */}
+        <pointLight position={[modelOffsetX, 5, 0]} intensity={2.4} color="#EC4899" />
 
-        {/* Studio-Grade HDRI Reflection Environment (Procedural Studio Softboxes) */}
-        {!isWireframe && (
-          <Environment resolution={256}>
-            <group rotation={[-Math.PI / 4, -0.6, 0]}>
-              <Lightformer form="rect" intensity={4.5} position={[0, 6, -8]} scale={[12, 6, 1]} color="#F8FAFC" />
-              <Lightformer form="rect" intensity={3.5} position={[-8, 3, 2]} scale={[8, 5, 1]} color="#E0F2FE" />
-              <Lightformer form="rect" intensity={2.5} position={[8, -2, 2]} scale={[8, 5, 1]} color="#BAE6FD" />
-              <Lightformer form="ring" intensity={2.0} position={[0, 1, 6]} scale={6} color="#DDD6FE" />
-            </group>
-          </Environment>
-        )}
+        {/* Front Specular Highlight Light for metals & glass */}
+        <pointLight position={[modelOffsetX, 2, 4]} intensity={2.0} color="#E0F2FE" />
 
         <Suspense fallback={<LoadingIndicator />}>
           {/* Shift model horizontally so it sits comfortably to the right of the Hologram Letter */}
