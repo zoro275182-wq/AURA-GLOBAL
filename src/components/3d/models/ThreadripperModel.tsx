@@ -11,6 +11,76 @@ interface ModelProps {
 
 const CPU_MODEL_URL = getAssetPath('models/cpu.glb');
 
+// High-resolution offline 2D Canvas laser-etching texture generator
+// Runs 100% in local memory with zero external font or network requests.
+function createLaserEtchTexture(): THREE.CanvasTexture {
+  const canvas = document.createElement('canvas');
+  canvas.width = 1024;
+  canvas.height = 1024;
+  const ctx = canvas.getContext('2d');
+
+  if (ctx) {
+    // Clear transparent background
+    ctx.clearRect(0, 0, 1024, 1024);
+
+    // 1. AMD RYZEN Laser Engraved Brand Header
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillStyle = '#0F172A';
+    ctx.font = 'bold 54px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, monospace';
+    ctx.fillText('AMD RYZEN™', 512, 330);
+
+    // 2. AMD Signature Crimson-Orange Accent THREADRIPPER
+    ctx.fillStyle = '#EA580C';
+    ctx.font = '900 78px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, monospace';
+    ctx.fillText('THREADRIPPER™', 512, 420);
+
+    // 3. Model Subheading: PRO 7995WX
+    ctx.fillStyle = '#1E293B';
+    ctx.font = 'bold 52px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, monospace';
+    ctx.fillText('PRO 7995WX', 512, 500);
+
+    // Subtle divider laser line
+    ctx.fillStyle = '#94A3B8';
+    ctx.fillRect(312, 545, 400, 3);
+
+    // 4. Core Architecture Specs
+    ctx.fillStyle = '#334155';
+    ctx.font = '600 32px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, monospace';
+    ctx.fillText('96 CORES • 192 THREADS • 5.1 GHz BOOST', 512, 590);
+
+    // 5. Socket Architecture & Power
+    ctx.fillStyle = '#64748B';
+    ctx.font = '500 28px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, monospace';
+    ctx.fillText('sTR5 SOCKET • 350W TDP • DIFFUSED IN USA', 512, 640);
+
+    // 6. OPN Serial & Batch ID
+    ctx.fillStyle = '#94A3B8';
+    ctx.font = '500 24px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, monospace';
+    ctx.fillText('OPN 100-000000884 • YD7995WWA8884 • LOT 2411A', 512, 690);
+
+    // 7. Micro 2D DataMatrix Security QR Grid in top-right
+    ctx.fillStyle = '#1E293B';
+    const qrX = 760;
+    const qrY = 240;
+    const qrSize = 100;
+    ctx.fillRect(qrX, qrY, qrSize, qrSize);
+    ctx.fillStyle = '#CBD5E1';
+    for (let r = 0; r < 5; r++) {
+      for (let c = 0; c < 5; c++) {
+        if ((r + c) % 2 === 0) {
+          ctx.fillRect(qrX + 12 + c * 15, qrY + 12 + r * 15, 12, 12);
+        }
+      }
+    }
+  }
+
+  const texture = new THREE.CanvasTexture(canvas);
+  texture.anisotropy = 8;
+  texture.needsUpdate = true;
+  return texture;
+}
+
 // Authentic Real High-Poly AMD Ryzen Threadripper PRO 7995WX (sTR5 Workstation Architecture)
 export const ThreadripperModel: React.FC<ModelProps> = ({ wireframe = false }) => {
   const groupRef = useRef<THREE.Group>(null);
@@ -23,6 +93,10 @@ export const ThreadripperModel: React.FC<ModelProps> = ({ wireframe = false }) =
       loader.setMeshoptDecoder(MeshoptDecoder);
     }
   );
+
+  const laserTexture = useMemo(() => {
+    return createLaserEtchTexture();
+  }, []);
 
   const clonedScene = useMemo(() => {
     const clone = gltf.scene.clone(true);
@@ -126,20 +200,25 @@ export const ThreadripperModel: React.FC<ModelProps> = ({ wireframe = false }) =
       >
         <primitive object={clonedScene} />
 
-        {/* Authentic Laser-Engraved Accents and Pin-1 Indicator */}
-        <group position={[0, 0, 0.00512]}>
-          {/* Micro 2D DataMatrix Security QR Square in top-right corner */}
-          <mesh position={[0.0115, 0.0095, 0.00005]}>
-            <planeGeometry args={[0.0032, 0.0032]} />
-            <meshBasicMaterial color="#1E293B" />
-          </mesh>
+        {/* 
+          Authentic Laser-Engraved Typography placed DIRECTLY on the nickel IHS surface lid (Z = 0.00512).
+          Using offline canvas texture: ultra-crisp, perfectly flush, 0 network requests, 0 external font dependencies!
+        */}
+        <mesh position={[0, 0, 0.00512]}>
+          <planeGeometry args={[0.026, 0.026]} />
+          <meshBasicMaterial
+            map={laserTexture}
+            transparent
+            opacity={0.92}
+            depthWrite={false}
+          />
+        </mesh>
 
-          {/* Authentic Pin-1 Gold Alignment Triangle Marker in bottom-left corner */}
-          <mesh position={[-0.0125, -0.0125, 0.00005]} rotation={[0, 0, -Math.PI / 4]}>
-            <coneGeometry args={[0.0016, 0.0022, 3]} />
-            <meshBasicMaterial color="#F59E0B" />
-          </mesh>
-        </group>
+        {/* Authentic Pin-1 Gold Alignment Triangle Marker in bottom-left corner */}
+        <mesh position={[-0.0125, -0.0125, 0.00514]} rotation={[0, 0, -Math.PI / 4]}>
+          <coneGeometry args={[0.0016, 0.0022, 3]} />
+          <meshBasicMaterial color="#F59E0B" />
+        </mesh>
       </group>
     </Float>
   );
