@@ -1,170 +1,471 @@
 import React, { useMemo, useRef } from 'react';
 import { useFrame } from '@react-three/fiber';
-import { Float, useGLTF } from '@react-three/drei';
+import { Float } from '@react-three/drei';
 import * as THREE from 'three';
-import { MeshoptDecoder } from 'three/examples/jsm/libs/meshopt_decoder.module.js';
-import { getAssetPath } from '../../../utils/assetPath';
 
 interface ModelProps {
   wireframe?: boolean;
 }
 
-const GPU_MODEL_URL = getAssetPath('models/gpu.glb');
-
-// Authentic Real High-Poly NVIDIA GeForce RTX 5090 Founders Edition with Triple Axial Fans
+// 100% Procedural High-Detail Custom RTX 5090 (MSI Gaming X Trio / SUPRIM inspired)
+// Features:
+// 1. Triple TORX 5.0 Frosted White Ringed Fans on the FRONT shroud with counter-rotation.
+// 2. High-precision MSI Dragon emblem center badges on metallic spinner hubs.
+// 3. Iconic RGB Neon Chevrons (flowing purple/cyan/blue lighting strips) across the front shroud facets.
+// 4. Matte Gunmetal & Obsidian geometric angular front shroud with beveled chamfers.
+// 5. Heavy-duty aluminum heatsink cooling fin stack & copper heatpipe core.
+// 6. Illuminated top crest with MSI Dragon Logo and "GEFORCE RTX" branding.
+// 7. Right edge Dragon Shield illuminated badge.
 export const RTX5090Model: React.FC<ModelProps> = ({ wireframe = false }) => {
   const cardGroup = useRef<THREE.Group>(null);
-  const fan1Ref = useRef<THREE.Object3D | null>(null);
-  const fan2Ref = useRef<THREE.Object3D | null>(null);
-  const fan3Ref = useRef<THREE.Object3D | null>(null);
+  const fan1Ref = useRef<THREE.Group>(null);
+  const fan2Ref = useRef<THREE.Group>(null);
+  const fan3Ref = useRef<THREE.Group>(null);
 
-  const gltf = useGLTF(
-    GPU_MODEL_URL,
-    false,
-    false,
-    (loader) => {
-      loader.setMeshoptDecoder(MeshoptDecoder);
-    }
-  );
+  // Textures generated procedurally on local canvas for authentic branding
+  const { dragonTexture, msiTopLogoTexture, geforceRtxTexture } = useMemo(() => {
+    // 1. Dragon Logo Badge for fan center
+    const dCanvas = document.createElement('canvas');
+    dCanvas.width = 512;
+    dCanvas.height = 512;
+    const dCtx = dCanvas.getContext('2d')!;
+
+    // Black metallic ring background
+    dCtx.fillStyle = '#0F1318';
+    dCtx.fillRect(0, 0, 512, 512);
+
+    // Outer silver chrome ring
+    dCtx.strokeStyle = '#E2E8F0';
+    dCtx.lineWidth = 18;
+    dCtx.beginPath();
+    dCtx.arc(256, 256, 240, 0, Math.PI * 2);
+    dCtx.stroke();
+
+    // Red/silver accent ring
+    dCtx.strokeStyle = '#38BDF8';
+    dCtx.lineWidth = 6;
+    dCtx.beginPath();
+    dCtx.arc(256, 256, 220, 0, Math.PI * 2);
+    dCtx.stroke();
+
+    // Stylized MSI Dragon Emblem (procedural vector curve)
+    dCtx.save();
+    dCtx.translate(256, 256);
+    dCtx.strokeStyle = '#F8FAFC';
+    dCtx.fillStyle = '#E2E8F0';
+    dCtx.lineWidth = 10;
+    dCtx.lineCap = 'round';
+    dCtx.lineJoin = 'round';
+
+    // Dragon silhouette
+    dCtx.beginPath();
+    dCtx.moveTo(-60, 80);
+    dCtx.bezierCurveTo(-110, 30, -90, -60, -20, -90);
+    dCtx.bezierCurveTo(20, -110, 80, -90, 90, -30);
+    dCtx.bezierCurveTo(100, 30, 40, 90, -10, 85);
+    dCtx.bezierCurveTo(-40, 80, -60, 50, -30, 20);
+    dCtx.bezierCurveTo(0, -10, 40, -10, 45, -40);
+    dCtx.stroke();
+
+    // Dragon head and crest horns
+    dCtx.beginPath();
+    dCtx.moveTo(-20, -90);
+    dCtx.lineTo(-10, -140);
+    dCtx.lineTo(20, -100);
+    dCtx.lineTo(50, -130);
+    dCtx.lineTo(60, -85);
+    dCtx.stroke();
+
+    // Wing spikes
+    dCtx.beginPath();
+    dCtx.moveTo(40, -30);
+    dCtx.lineTo(120, -50);
+    dCtx.lineTo(80, 0);
+    dCtx.lineTo(130, 10);
+    dCtx.lineTo(70, 40);
+    dCtx.stroke();
+
+    dCtx.restore();
+
+    const dTex = new THREE.CanvasTexture(dCanvas);
+    dTex.needsUpdate = true;
+
+    // 2. MSI Dragon + Text Top Plate
+    const mCanvas = document.createElement('canvas');
+    mCanvas.width = 1024;
+    mCanvas.height = 256;
+    const mCtx = mCanvas.getContext('2d')!;
+    mCtx.fillStyle = '#0B0F14';
+    mCtx.fillRect(0, 0, 1024, 256);
+
+    // Glowing Dragon Logo + "msi"
+    mCtx.fillStyle = '#FFFFFF';
+    mCtx.font = '900 110px "Inter", "Segoe UI", sans-serif';
+    mCtx.textAlign = 'center';
+    mCtx.textBaseline = 'middle';
+    mCtx.shadowColor = '#38BDF8';
+    mCtx.shadowBlur = 18;
+    mCtx.fillText('⚡ msi', 512, 128);
+
+    const mTex = new THREE.CanvasTexture(mCanvas);
+    mTex.needsUpdate = true;
+
+    // 3. GEFORCE RTX Side Typography
+    const gCanvas = document.createElement('canvas');
+    gCanvas.width = 1024;
+    gCanvas.height = 256;
+    const gCtx = gCanvas.getContext('2d')!;
+    gCtx.fillStyle = '#0B0F14';
+    gCtx.fillRect(0, 0, 1024, 256);
+
+    gCtx.fillStyle = '#FFFFFF';
+    gCtx.font = '800 85px "Inter", "Segoe UI", sans-serif';
+    gCtx.textAlign = 'center';
+    gCtx.textBaseline = 'middle';
+    gCtx.shadowColor = '#F8FAFC';
+    gCtx.shadowBlur = 12;
+    gCtx.fillText('GEFORCE RTX™', 512, 128);
+
+    const gTex = new THREE.CanvasTexture(gCanvas);
+    gTex.needsUpdate = true;
+
+    return { dragonTexture: dTex, msiTopLogoTexture: mTex, geforceRtxTexture: gTex };
+  }, []);
 
   const materials = useMemo(() => {
-    // Gunmetal Titanium Matte Frame Material
-    const titaniumMat = new THREE.MeshPhysicalMaterial({
-      color: '#1E232F',
-      metalness: 0.94,
-      roughness: 0.18,
-      clearcoat: 0.85,
-      clearcoatRoughness: 0.08,
-      iridescence: 0.45,
-      iridescenceIOR: 1.4
+    const wireMat = new THREE.MeshBasicMaterial({ color: '#06B6D4', wireframe: true });
+
+    // Matte Obsidian Dark Grey Outer Geometric Shroud (MSI Gaming/Trio style)
+    const shroudMat = new THREE.MeshPhysicalMaterial({
+      color: '#1E232B',
+      metalness: 0.85,
+      roughness: 0.32,
+      clearcoat: 0.3,
+      clearcoatRoughness: 0.2
     });
 
-    // Pure Copper Heatsink Fin Array
-    const copperFinMat = new THREE.MeshStandardMaterial({
+    // Dark gunmetal bevel accent insets
+    const darkAccentMat = new THREE.MeshStandardMaterial({
+      color: '#0D1117',
+      metalness: 0.9,
+      roughness: 0.25
+    });
+
+    // White / Frosted Milky Fan Blades (TORX 5.0 translucent frosted finish)
+    const fanBladeWhiteMat = new THREE.MeshPhysicalMaterial({
+      color: '#F1F5F9',
+      metalness: 0.1,
+      roughness: 0.18,
+      transmission: 0.3,
+      thickness: 0.4,
+      clearcoat: 0.8
+    });
+
+    // Chrome outer cowl ring surrounding each fan
+    const cowlRingMat = new THREE.MeshStandardMaterial({
+      color: '#151A22',
+      metalness: 0.95,
+      roughness: 0.15
+    });
+
+    // Heatsink aluminum cooling fin stack
+    const finStackMat = new THREE.MeshStandardMaterial({
+      color: '#475569',
+      metalness: 0.92,
+      roughness: 0.28
+    });
+
+    // Pure Copper heatpipes
+    const heatpipeMat = new THREE.MeshStandardMaterial({
       color: '#D97706',
       metalness: 0.95,
-      roughness: 0.22
+      roughness: 0.2
     });
 
-    // Gold PCIe 5.0 Connector Contacts
-    const goldPinMat = new THREE.MeshStandardMaterial({
-      color: '#FBBF24',
-      metalness: 0.98,
-      roughness: 0.1
+    // Stainless steel PCIe backplate & IO bracket
+    const metalMat = new THREE.MeshStandardMaterial({
+      color: '#94A3B8',
+      metalness: 0.95,
+      roughness: 0.2
     });
 
-    // Wireframe Material
-    const wireframeMat = new THREE.MeshBasicMaterial({
-      color: '#06B6D4',
-      wireframe: true
+    // Dragon emblem badge material for fan center
+    const dragonBadgeMat = new THREE.MeshStandardMaterial({
+      map: dragonTexture,
+      metalness: 0.7,
+      roughness: 0.2
     });
+
+    // Top MSI logo
+    const msiTopLogoMat = new THREE.MeshBasicMaterial({
+      map: msiTopLogoTexture,
+      transparent: true
+    });
+
+    // Top GEFORCE RTX logo
+    const geforceLogoMat = new THREE.MeshBasicMaterial({
+      map: geforceRtxTexture,
+      transparent: true
+    });
+
+    // RGB Illuminated Strips (Chevrons)
+    const rgbCyan = new THREE.MeshBasicMaterial({ color: '#38BDF8' });
+    const rgbMagenta = new THREE.MeshBasicMaterial({ color: '#C084FC' });
+    const rgbViolet = new THREE.MeshBasicMaterial({ color: '#818CF8' });
 
     return {
-      titaniumMat: wireframe ? wireframeMat : titaniumMat,
-      copperFinMat: wireframe ? wireframeMat : copperFinMat,
-      goldPinMat: wireframe ? wireframeMat : goldPinMat,
-      wireframeMat
+      shroudMat: wireframe ? wireMat : shroudMat,
+      darkAccentMat: wireframe ? wireMat : darkAccentMat,
+      fanBladeWhiteMat: wireframe ? wireMat : fanBladeWhiteMat,
+      cowlRingMat: wireframe ? wireMat : cowlRingMat,
+      finStackMat: wireframe ? wireMat : finStackMat,
+      heatpipeMat: wireframe ? wireMat : heatpipeMat,
+      metalMat: wireframe ? wireMat : metalMat,
+      dragonBadgeMat: wireframe ? wireMat : dragonBadgeMat,
+      msiTopLogoMat: wireframe ? wireMat : msiTopLogoMat,
+      geforceLogoMat: wireframe ? wireMat : geforceLogoMat,
+      rgbCyan: wireframe ? wireMat : rgbCyan,
+      rgbMagenta: wireframe ? wireMat : rgbMagenta,
+      rgbViolet: wireframe ? wireMat : rgbViolet
     };
-  }, [wireframe]);
+  }, [wireframe, dragonTexture, msiTopLogoTexture, geforceRtxTexture]);
 
-  const clonedScene = useMemo(() => {
-    const clone = gltf.scene.clone(true);
+  // Construct TORX 5.0 Frosted Fan with connected ring and 9 swept blades
+  const renderTorxFan = (ref: React.RefObject<THREE.Group>, xPos: number) => {
+    const fanRadius = 0.52;
+    const hubRadius = 0.17;
+    const bladeCount = 9;
 
-    clone.traverse((child) => {
-      if ((child as THREE.Mesh).isMesh) {
-        const mesh = child as THREE.Mesh;
-        mesh.castShadow = true;
-        mesh.receiveShadow = true;
+    return (
+      <group position={[xPos, 0, 0.42]}>
+        {/* Outer Circular Cowl Rim */}
+        <mesh material={materials.cowlRingMat}>
+          <torusGeometry args={[fanRadius + 0.02, 0.025, 16, 48]} />
+        </mesh>
 
-        if (wireframe) {
-          mesh.material = materials.wireframeMat;
-        } else {
-          const matName = (mesh.material as THREE.Material)?.name?.toLowerCase() || '';
-          const meshName = mesh.name.toLowerCase();
+        {/* Dynamic Spinning Fan Rotor Group */}
+        <group ref={ref}>
+          {/* Outer Interconnected Fan Blade Ring (TORX 5.0 Signature outer ring band) */}
+          <mesh material={materials.fanBladeWhiteMat}>
+            <torusGeometry args={[fanRadius - 0.03, 0.015, 12, 48]} />
+          </mesh>
 
-          if (meshName.includes('fin') || matName.includes('fin') || matName.includes('copper')) {
-            mesh.material = materials.copperFinMat;
-          } else if (meshName.includes('pcie') || matName.includes('finger') || matName.includes('gold')) {
-            mesh.material = materials.goldPinMat;
-          } else if (meshName.includes('frame') || matName.includes('alu') || matName.includes('dark')) {
-            mesh.material = materials.titaniumMat;
-          }
-        }
-      }
-    });
+          {/* 9 Swept Translucent White Fan Blades */}
+          {Array.from({ length: bladeCount }).map((_, idx) => {
+            const angle = (idx * Math.PI * 2) / bladeCount;
+            return (
+              <group key={idx} rotation={[0, 0, angle]}>
+                <mesh
+                  position={[0, fanRadius * 0.52, 0]}
+                  rotation={[-Math.PI / 4.2, 0, -0.15]}
+                  material={materials.fanBladeWhiteMat}
+                >
+                  <boxGeometry args={[0.13, fanRadius * 0.72, 0.016]} />
+                </mesh>
+              </group>
+            );
+          })}
 
-    // Find the original 2 fans in the GLB
-    const f1 = clone.getObjectByName('gpu_fan_rotor_1') || null;
-    const f2 = clone.getObjectByName('gpu_fan_rotor_2') || null;
+          {/* Center Hub Housing */}
+          <mesh rotation={[Math.PI / 2, 0, 0]} material={materials.darkAccentMat}>
+            <cylinderGeometry args={[hubRadius, hubRadius, 0.06, 32]} />
+          </mesh>
 
-    // Reposition the fans symmetrically to make a perfect 3-fan layout across the card face
-    // Original positions: Fan1: X=0.010, Fan2: X=0.126 (distance is 0.116)
-    // For 3 fans across the shroud:
-    // Left fan: X = 0.005
-    // Middle fan: X = 0.068
-    // Right fan: X = 0.131
-    if (f1) {
-      f1.position.x = 0.005;
-      fan1Ref.current = f1;
-    }
+          {/* Metallic Center Hub Rim */}
+          <mesh position={[0, 0, 0.025]} material={materials.metalMat}>
+            <torusGeometry args={[hubRadius, 0.012, 12, 32]} />
+          </mesh>
 
-    if (f2) {
-      f2.position.x = 0.131;
-      fan2Ref.current = f2;
-
-      // Clone f2 to create the authentic 3rd fan in the middle
-      const f3 = f2.clone(true);
-      f3.name = 'gpu_fan_rotor_3';
-      f3.position.x = 0.068; // Dead center between Fan 1 and Fan 2
-      f2.parent?.add(f3);
-      fan3Ref.current = f3;
-    }
-
-    return clone;
-  }, [gltf, wireframe, materials]);
+          {/* Front MSI Dragon Emblem Badge Disk */}
+          <mesh position={[0, 0, 0.035]} material={materials.dragonBadgeMat}>
+            <circleGeometry args={[hubRadius * 0.92, 32]} />
+          </mesh>
+        </group>
+      </group>
+    );
+  };
 
   useFrame((_, delta) => {
-    // Smooth idle showroom rotation around card's geometric center
+    // Showroom rotation around the card
     if (cardGroup.current) {
       cardGroup.current.rotation.y += delta * 0.25;
     }
-    // Synchronized 3-fan axial airflow rotation
-    if (fan1Ref.current) {
-      fan1Ref.current.rotation.y += delta * 7.0;
-    }
-    if (fan2Ref.current) {
-      fan2Ref.current.rotation.y += delta * 7.0;
-    }
-    if (fan3Ref.current) {
-      fan3Ref.current.rotation.y -= delta * 7.0; // Reverse middle fan for aerodynamic turbulence reduction
-    }
+
+    // High-speed realistic fan rotation:
+    // Left and right rotate clockwise, center rotates counter-clockwise (MSI Alternate Spin tech)
+    if (fan1Ref.current) fan1Ref.current.rotation.z -= delta * 7.0;
+    if (fan2Ref.current) fan2Ref.current.rotation.z += delta * 7.0;
+    if (fan3Ref.current) fan3Ref.current.rotation.z -= delta * 7.0;
   });
 
   return (
-    <Float speed={1.8} rotationIntensity={0.15} floatIntensity={0.2}>
+    <Float speed={1.6} rotationIntensity={0.12} floatIntensity={0.2}>
       <group
         ref={cardGroup}
-        scale={[14.5, 14.5, 14.5]}
-        rotation={[-Math.PI / 7, Math.PI / 4, 0]}
+        scale={[1.85, 1.85, 1.85]}
+        rotation={[-0.2, 0.45, 0]}
         position={[0, 0, 0]}
       >
-        {/* Exact center of mass offset so the GPU rotates on its true physical center */}
-        <group position={[-0.0645, 0.0198, -0.0539]}>
-          <primitive object={clonedScene} />
+        {/* ========================================================
+            1. MAIN BODY SHROUD (MSI Angular Geometric Chassis)
+           ======================================================== */}
+        {/* Central Card Shroud Body */}
+        <mesh material={materials.shroudMat}>
+          <boxGeometry args={[3.8, 1.48, 0.78]} />
+        </mesh>
 
-          {/* Illuminated LED GEFORCE RTX 5090 emblem directly flush on the side metal bezel */}
-          <group position={[0.0645, -0.0198, 0.1246]}>
-            <mesh position={[0, 0, 0.0005]}>
-              <boxGeometry args={[0.08, 0.008, 0.001]} />
-              <meshBasicMaterial color="#E2E8F0" />
-            </mesh>
-            {/* Soft illuminated glow on side emblem */}
-            <pointLight position={[0, 0, 0.008]} intensity={0.5} color="#A7F3D0" distance={0.3} />
-          </group>
+        {/* Top/Bottom Chamfered Geometric Facets */}
+        <mesh position={[0, 0.74, 0.2]} rotation={[Math.PI / 4.5, 0, 0]} material={materials.darkAccentMat}>
+          <boxGeometry args={[3.78, 0.16, 0.3]} />
+        </mesh>
+        <mesh position={[0, -0.74, 0.2]} rotation={[-Math.PI / 4.5, 0, 0]} material={materials.darkAccentMat}>
+          <boxGeometry args={[3.78, 0.16, 0.3]} />
+        </mesh>
+
+        {/* Angular Geometric Front Face Ribs */}
+        <mesh position={[-0.6, 0, 0.4]} material={materials.shroudMat}>
+          <boxGeometry args={[0.08, 1.4, 0.05]} />
+        </mesh>
+        <mesh position={[0.6, 0, 0.4]} material={materials.shroudMat}>
+          <boxGeometry args={[0.08, 1.4, 0.05]} />
+        </mesh>
+
+        {/* ========================================================
+            2. TRIPLE TORX 5.0 FANS ACROSS THE FRONT
+           ======================================================== */}
+        {/* Left Fan */}
+        {renderTorxFan(fan1Ref, -1.2)}
+
+        {/* Center Fan */}
+        {renderTorxFan(fan2Ref, 0.0)}
+
+        {/* Right Fan */}
+        {renderTorxFan(fan3Ref, 1.2)}
+
+        {/* ========================================================
+            3. MSI SIGNATURE RGB CHEVRON STRIPES (Front Facets)
+           ======================================================== */}
+        {/* Upper Diagonal Chevron Slash Lights between Fans 1 & 2 */}
+        <group position={[-0.58, 0.48, 0.42]} rotation={[0, 0, -Math.PI / 4]}>
+          <mesh position={[-0.07, 0, 0]} material={materials.rgbCyan}>
+            <boxGeometry args={[0.03, 0.28, 0.02]} />
+          </mesh>
+          <mesh position={[0, 0, 0]} material={materials.rgbViolet}>
+            <boxGeometry args={[0.03, 0.34, 0.02]} />
+          </mesh>
+          <mesh position={[0.07, 0, 0]} material={materials.rgbMagenta}>
+            <boxGeometry args={[0.03, 0.4, 0.02]} />
+          </mesh>
         </group>
+
+        {/* Lower Diagonal Chevron Accent between Fans 1 & 2 */}
+        <group position={[-0.62, -0.48, 0.42]} rotation={[0, 0, -Math.PI / 4]}>
+          <mesh position={[-0.05, 0, 0]} material={materials.rgbCyan}>
+            <boxGeometry args={[0.03, 0.22, 0.02]} />
+          </mesh>
+          <mesh position={[0.02, 0, 0]} material={materials.rgbViolet}>
+            <boxGeometry args={[0.03, 0.26, 0.02]} />
+          </mesh>
+        </group>
+
+        {/* Right Shroud Edge Illuminated Ring / RGB Dragon Shield Logo */}
+        <group position={[1.86, 0.1, 0.18]} rotation={[0, Math.PI / 2, 0]}>
+          <mesh material={materials.rgbCyan}>
+            <torusGeometry args={[0.16, 0.02, 16, 32]} />
+          </mesh>
+          <mesh position={[0, 0, 0.005]} material={materials.dragonBadgeMat}>
+            <circleGeometry args={[0.14, 32]} />
+          </mesh>
+        </group>
+
+        {/* Soft Front Face RGB Ambient Glow Point Lights */}
+        <pointLight position={[-0.6, 0.5, 0.6]} intensity={1.5} color="#38BDF8" distance={1.8} />
+        <pointLight position={[-0.6, 0.5, 0.6]} intensity={1.5} color="#C084FC" distance={1.8} />
+        <pointLight position={[1.85, 0.1, 0.3]} intensity={1.2} color="#38BDF8" distance={1.5} />
+
+        {/* ========================================================
+            4. TOP EDGE CREST: MSI LOGO & GEFORCE RTX BRANDING
+           ======================================================== */}
+        {/* Top Edge Angled Bezel Plate */}
+        <mesh position={[0, 0.77, 0.08]} rotation={[-Math.PI / 7, 0, 0]} material={materials.darkAccentMat}>
+          <boxGeometry args={[3.76, 0.04, 0.38]} />
+        </mesh>
+
+        {/* Top Left: MSI Logo Plate */}
+        <mesh position={[-0.95, 0.81, 0.11]} rotation={[-Math.PI / 7, 0, 0]} material={materials.msiTopLogoMat}>
+          <planeGeometry args={[0.85, 0.22]} />
+        </mesh>
+
+        {/* Top Right: GEFORCE RTX™ Inlaid Brand */}
+        <mesh position={[0.85, 0.81, 0.11]} rotation={[-Math.PI / 7, 0, 0]} material={materials.geforceLogoMat}>
+          <planeGeometry args={[1.35, 0.22]} />
+        </mesh>
+
+        {/* 16-Pin 12V-2x6 Power Connector Housing recessed in top */}
+        <mesh position={[-0.05, 0.78, -0.05]} material={materials.darkAccentMat}>
+          <boxGeometry args={[0.34, 0.12, 0.18]} />
+        </mesh>
+        <mesh position={[-0.05, 0.79, -0.05]} material={materials.metalMat}>
+          <boxGeometry args={[0.28, 0.06, 0.12]} />
+        </mesh>
+
+        {/* ========================================================
+            5. DENSE HEATSINK FIN ARRAYS & COPPER HEATPIPES
+           ======================================================== */}
+        {/* Top & Bottom Visible Cooling Fin Slots */}
+        <group position={[0, 0, 0]}>
+          {Array.from({ length: 42 }).map((_, idx) => {
+            const x = -1.75 + idx * 0.085;
+            return (
+              <mesh key={idx} position={[x, 0, -0.05]} material={materials.finStackMat}>
+                <boxGeometry args={[0.018, 1.34, 0.65]} />
+              </mesh>
+            );
+          })}
+        </group>
+
+        {/* 5 Massive Pure Copper Heatpipes running through fins */}
+        {[-0.42, -0.21, 0.0, 0.21, 0.42].map((y, idx) => (
+          <mesh key={idx} position={[0, y, -0.05]} rotation={[0, 0, Math.PI / 2]} material={materials.heatpipeMat}>
+            <cylinderGeometry args={[0.038, 0.038, 3.65, 16]} />
+          </mesh>
+        ))}
+
+        {/* ========================================================
+            6. REAR BACKPLATE & PCIE INTERFACE
+           ======================================================== */}
+        {/* Brushed Metal Backplate */}
+        <mesh position={[0, 0, -0.4]} material={materials.shroudMat}>
+          <boxGeometry args={[3.8, 1.48, 0.04]} />
+        </mesh>
+
+        {/* Flow-Through Exhaust Window on Backplate */}
+        <mesh position={[1.1, 0, -0.405]} material={materials.darkAccentMat}>
+          <boxGeometry args={[1.1, 1.0, 0.02]} />
+        </mesh>
+
+        {/* Triple-Slot Stainless Steel Rear I/O Bracket */}
+        <mesh position={[-1.92, 0, -0.02]} material={materials.metalMat}>
+          <boxGeometry args={[0.05, 1.75, 0.75]} />
+        </mesh>
+
+        {/* 3x DisplayPort 2.1 + 1x HDMI 2.1 Display Output Ports */}
+        {[-0.45, -0.15, 0.15, 0.45].map((y, idx) => (
+          <group key={idx} position={[-1.95, y, 0]}>
+            <mesh material={materials.darkAccentMat}>
+              <boxGeometry args={[0.02, 0.14, 0.24]} />
+            </mesh>
+            <mesh position={[-0.005, 0, 0]} material={materials.metalMat}>
+              <boxGeometry args={[0.01, 0.06, 0.16]} />
+            </mesh>
+          </group>
+        ))}
+
+        {/* Gold Plated PCIe 5.0 x16 Contact Fingers */}
+        <mesh position={[-0.5, -0.79, 0]} material={materials.heatpipeMat}>
+          <boxGeometry args={[1.6, 0.1, 0.03]} />
+        </mesh>
       </group>
     </Float>
   );
 };
-
-useGLTF.preload(GPU_MODEL_URL);
