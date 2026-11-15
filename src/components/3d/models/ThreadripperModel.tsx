@@ -11,72 +11,112 @@ interface ModelProps {
 
 const CPU_MODEL_URL = getAssetPath('models/cpu.glb');
 
-// High-resolution offline 2D Canvas laser-etching texture generator
-// Runs 100% in local memory with zero external font or network requests.
+// Ultra-realistic 4K laser-etched IHS texture generator
+// Runs 100% locally in browser memory with zero external font or network requests.
 function createLaserEtchTexture(): THREE.CanvasTexture {
   const canvas = document.createElement('canvas');
-  canvas.width = 1024;
-  canvas.height = 1024;
+  canvas.width = 2048;
+  canvas.height = 2048;
   const ctx = canvas.getContext('2d');
 
   if (ctx) {
-    // Clear transparent background
-    ctx.clearRect(0, 0, 1024, 1024);
+    ctx.clearRect(0, 0, 2048, 2048);
 
-    // 1. AMD RYZEN Laser Engraved Brand Header
+    // Outer subtle metallic laser perimeter frame
+    ctx.strokeStyle = 'rgba(71, 85, 105, 0.4)';
+    ctx.lineWidth = 4;
+    ctx.strokeRect(180, 180, 1688, 1688);
+
+    // Inner chamfer corner accents
+    ctx.strokeStyle = 'rgba(100, 116, 139, 0.6)';
+    ctx.lineWidth = 6;
+    const corner = 60;
+    // Top-left
+    ctx.beginPath();
+    ctx.moveTo(180, 180 + corner);
+    ctx.lineTo(180, 180);
+    ctx.lineTo(180 + corner, 180);
+    ctx.stroke();
+    // Bottom-right
+    ctx.beginPath();
+    ctx.moveTo(1868, 1868 - corner);
+    ctx.lineTo(1868, 1868);
+    ctx.lineTo(1868 - corner, 1868);
+    ctx.stroke();
+
+    // 1. AMD Brand Logo / Triangle Mark on Top Left
+    ctx.fillStyle = '#0F172A';
+    ctx.beginPath();
+    ctx.moveTo(260, 260);
+    ctx.lineTo(340, 260);
+    ctx.lineTo(340, 340);
+    ctx.lineTo(260, 340);
+    ctx.closePath();
+    ctx.fill();
+    ctx.clearRect(285, 285, 30, 30);
+
+    // 2. AMD RYZEN Laser Engraved Brand Header
     ctx.textAlign = 'center';
     ctx.textBaseline = 'middle';
     ctx.fillStyle = '#0F172A';
-    ctx.font = 'bold 54px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, monospace';
-    ctx.fillText('AMD RYZEN™', 512, 330);
+    ctx.font = '800 100px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", sans-serif';
+    ctx.letterSpacing = '14px';
+    ctx.fillText('AMD RYZEN™', 1024, 600);
 
-    // 2. AMD Signature Crimson-Orange Accent THREADRIPPER
+    // 3. AMD Signature Crimson-Orange Accent THREADRIPPER (Glowing metallic gradient look)
     ctx.fillStyle = '#EA580C';
-    ctx.font = '900 78px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, monospace';
-    ctx.fillText('THREADRIPPER™', 512, 420);
+    ctx.font = '900 148px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", sans-serif';
+    ctx.letterSpacing = '10px';
+    ctx.fillText('THREADRIPPER™', 1024, 780);
 
-    // 3. Model Subheading: PRO 7995WX
+    // 4. Model Subheading: PRO 7995WX in Dark Titanium
     ctx.fillStyle = '#1E293B';
-    ctx.font = 'bold 52px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, monospace';
-    ctx.fillText('PRO 7995WX', 512, 500);
+    ctx.font = '800 96px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", sans-serif';
+    ctx.letterSpacing = '16px';
+    ctx.fillText('PRO 7995WX', 1024, 940);
 
-    // Subtle divider laser line
-    ctx.fillStyle = '#94A3B8';
-    ctx.fillRect(312, 545, 400, 3);
-
-    // 4. Core Architecture Specs
-    ctx.fillStyle = '#334155';
-    ctx.font = '600 32px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, monospace';
-    ctx.fillText('96 CORES • 192 THREADS • 5.1 GHz BOOST', 512, 590);
-
-    // 5. Socket Architecture & Power
-    ctx.fillStyle = '#64748B';
-    ctx.font = '500 28px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, monospace';
-    ctx.fillText('sTR5 SOCKET • 350W TDP • DIFFUSED IN USA', 512, 640);
-
-    // 6. OPN Serial & Batch ID
-    ctx.fillStyle = '#94A3B8';
-    ctx.font = '500 24px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, monospace';
-    ctx.fillText('OPN 100-000000884 • YD7995WWA8884 • LOT 2411A', 512, 690);
-
-    // 7. Micro 2D DataMatrix Security QR Grid in top-right
-    ctx.fillStyle = '#1E293B';
-    const qrX = 760;
-    const qrY = 240;
-    const qrSize = 100;
-    ctx.fillRect(qrX, qrY, qrSize, qrSize);
+    // Double precision laser divider lines
     ctx.fillStyle = '#CBD5E1';
-    for (let r = 0; r < 5; r++) {
-      for (let c = 0; c < 5; c++) {
-        if ((r + c) % 2 === 0) {
-          ctx.fillRect(qrX + 12 + c * 15, qrY + 12 + r * 15, 12, 12);
+    ctx.fillRect(480, 1030, 1088, 5);
+    ctx.fillStyle = '#EA580C';
+    ctx.fillRect(924, 1028, 200, 9);
+
+    // 5. Core Architecture Specs
+    ctx.fillStyle = '#334155';
+    ctx.font = '700 60px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", sans-serif';
+    ctx.letterSpacing = '6px';
+    ctx.fillText('96 CORES  •  192 THREADS  •  5.1 GHz BOOST', 1024, 1130);
+
+    // 6. Socket Architecture & Power
+    ctx.fillStyle = '#475569';
+    ctx.font = '600 50px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", sans-serif';
+    ctx.letterSpacing = '5px';
+    ctx.fillText('sTR5 / SP6 WORKSTATION  •  350W TDP  •  DIFFUSED IN USA', 1024, 1230);
+
+    // 7. OPN Serial & Batch ID
+    ctx.fillStyle = '#64748B';
+    ctx.font = '600 42px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, monospace';
+    ctx.letterSpacing = '4px';
+    ctx.fillText('OPN 100-000000884 • YD7995WWA8884 • LOT 2411A', 1024, 1320);
+
+    // 8. Micro 2D DataMatrix Security QR Grid in top-right
+    const qrX = 1520;
+    const qrY = 260;
+    const qrSize = 190;
+    ctx.fillStyle = '#0F172A';
+    ctx.fillRect(qrX, qrY, qrSize, qrSize);
+    ctx.fillStyle = '#E2E8F0';
+    for (let r = 0; r < 7; r++) {
+      for (let c = 0; c < 7; c++) {
+        if ((r * c + r + c) % 3 !== 0) {
+          ctx.fillRect(qrX + 20 + c * 22, qrY + 20 + r * 22, 18, 18);
         }
       }
     }
   }
 
   const texture = new THREE.CanvasTexture(canvas);
-  texture.anisotropy = 8;
+  texture.anisotropy = 16;
   texture.needsUpdate = true;
   return texture;
 }
@@ -201,15 +241,15 @@ export const ThreadripperModel: React.FC<ModelProps> = ({ wireframe = false }) =
         <primitive object={clonedScene} />
 
         {/* 
-          Authentic Laser-Engraved Typography placed DIRECTLY on the nickel IHS surface lid (Z = 0.00512).
-          Using offline canvas texture: ultra-crisp, perfectly flush, 0 network requests, 0 external font dependencies!
+          Crisp, High-Resolution Laser-Engraved Typography placed DIRECTLY on the nickel IHS surface lid (Z = 0.00512).
+          Using offline 2048x2048 canvas texture: ultra-crisp, perfectly flush, 0 network requests, 0 external font dependencies!
         */}
         <mesh position={[0, 0, 0.00512]}>
-          <planeGeometry args={[0.026, 0.026]} />
+          <planeGeometry args={[0.027, 0.027]} />
           <meshBasicMaterial
             map={laserTexture}
             transparent
-            opacity={0.92}
+            opacity={0.96}
             depthWrite={false}
           />
         </mesh>

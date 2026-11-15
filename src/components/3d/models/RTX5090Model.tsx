@@ -11,11 +11,12 @@ interface ModelProps {
 
 const GPU_MODEL_URL = getAssetPath('models/gpu.glb');
 
-// Authentic Real High-Poly NVIDIA GeForce RTX 5090 Founders Edition
+// Authentic Real High-Poly NVIDIA GeForce RTX 5090 Founders Edition with Triple-Fan Aerodynamic Array
 export const RTX5090Model: React.FC<ModelProps> = ({ wireframe = false }) => {
   const cardGroup = useRef<THREE.Group>(null);
   const fan1Ref = useRef<THREE.Object3D | null>(null);
   const fan2Ref = useRef<THREE.Object3D | null>(null);
+  const fan3Ref = useRef<THREE.Group>(null);
 
   const gltf = useGLTF(
     GPU_MODEL_URL,
@@ -26,9 +27,7 @@ export const RTX5090Model: React.FC<ModelProps> = ({ wireframe = false }) => {
     }
   );
 
-  const clonedScene = useMemo(() => {
-    const clone = gltf.scene.clone(true);
-
+  const materials = useMemo(() => {
     // Gunmetal Titanium Matte Frame Material
     const titaniumMat = new THREE.MeshPhysicalMaterial({
       color: '#1E232F',
@@ -54,11 +53,39 @@ export const RTX5090Model: React.FC<ModelProps> = ({ wireframe = false }) => {
       roughness: 0.1
     });
 
+    // Stealth Black Fan Blade Material
+    const fanBladeMat = new THREE.MeshStandardMaterial({
+      color: '#090D14',
+      metalness: 0.7,
+      roughness: 0.25
+    });
+
+    // Polished Silver Aluminum Hub
+    const fanHubMat = new THREE.MeshPhysicalMaterial({
+      color: '#F1F5F9',
+      metalness: 0.98,
+      roughness: 0.08,
+      clearcoat: 1.0
+    });
+
     // Wireframe Material
     const wireframeMat = new THREE.MeshBasicMaterial({
       color: '#06B6D4',
       wireframe: true
     });
+
+    return {
+      titaniumMat: wireframe ? wireframeMat : titaniumMat,
+      copperFinMat: wireframe ? wireframeMat : copperFinMat,
+      goldPinMat: wireframe ? wireframeMat : goldPinMat,
+      fanBladeMat: wireframe ? wireframeMat : fanBladeMat,
+      fanHubMat: wireframe ? wireframeMat : fanHubMat,
+      wireframeMat
+    };
+  }, [wireframe]);
+
+  const clonedScene = useMemo(() => {
+    const clone = gltf.scene.clone(true);
 
     clone.traverse((child) => {
       if ((child as THREE.Mesh).isMesh) {
@@ -67,40 +94,43 @@ export const RTX5090Model: React.FC<ModelProps> = ({ wireframe = false }) => {
         mesh.receiveShadow = true;
 
         if (wireframe) {
-          mesh.material = wireframeMat;
+          mesh.material = materials.wireframeMat;
         } else {
           const matName = (mesh.material as THREE.Material)?.name?.toLowerCase() || '';
           const meshName = mesh.name.toLowerCase();
 
           if (meshName.includes('fin') || matName.includes('fin') || matName.includes('copper')) {
-            mesh.material = copperFinMat;
+            mesh.material = materials.copperFinMat;
           } else if (meshName.includes('pcie') || matName.includes('finger') || matName.includes('gold')) {
-            mesh.material = goldPinMat;
+            mesh.material = materials.goldPinMat;
           } else if (meshName.includes('frame') || matName.includes('alu') || matName.includes('dark')) {
-            mesh.material = titaniumMat;
+            mesh.material = materials.titaniumMat;
           }
         }
       }
     });
 
-    // Cache fan rotor object references
+    // Cache existing fan rotor object references from GLB
     fan1Ref.current = clone.getObjectByName('gpu_fan_rotor_1') || null;
     fan2Ref.current = clone.getObjectByName('gpu_fan_rotor_2') || null;
 
     return clone;
-  }, [gltf, wireframe]);
+  }, [gltf, wireframe, materials]);
 
   useFrame((_, delta) => {
     // Smooth idle showroom rotation around card's geometric center
     if (cardGroup.current) {
       cardGroup.current.rotation.y += delta * 0.25;
     }
-    // Dual counter-rotating axial airflow fans
+    // Synchronized triple counter-rotating axial airflow fans
     if (fan1Ref.current) {
       fan1Ref.current.rotation.y += delta * 7.0;
     }
     if (fan2Ref.current) {
       fan2Ref.current.rotation.y -= delta * 7.0;
+    }
+    if (fan3Ref.current) {
+      fan3Ref.current.rotation.y += delta * 7.0;
     }
   });
 
@@ -115,6 +145,30 @@ export const RTX5090Model: React.FC<ModelProps> = ({ wireframe = false }) => {
         {/* Exact center of mass offset so the GPU rotates on its true physical center */}
         <group position={[-0.0645, 0.0198, -0.0539]}>
           <primitive object={clonedScene} />
+
+          {/* Third High-Velocity Axial Flow Turbine Fan integrated into center/rear passthrough */}
+          <group position={[0.0645, -0.0198, -0.06]}>
+            {/* Aerodynamic Cowling Duct Ring */}
+            <mesh material={materials.titaniumMat}>
+              <torusGeometry args={[0.046, 0.003, 16, 32]} />
+            </mesh>
+            {/* Spinning Rotor Assembly with 9 Swept Aerodynamic Blades */}
+            <group ref={fan3Ref}>
+              <mesh material={materials.fanHubMat}>
+                <cylinderGeometry args={[0.015, 0.015, 0.006, 20]} />
+              </mesh>
+              {[0, 1, 2, 3, 4, 5, 6, 7, 8].map((i) => {
+                const angle = (i * (2 * Math.PI)) / 9;
+                return (
+                  <group key={i} rotation={[0, angle, 0]}>
+                    <mesh position={[0.024, 0, 0]} rotation={[0, 0, 0.35]} material={materials.fanBladeMat}>
+                      <boxGeometry args={[0.022, 0.002, 0.008]} />
+                    </mesh>
+                  </group>
+                );
+              })}
+            </group>
+          </group>
 
           {/* Illuminated LED GEFORCE RTX 5090 emblem directly flush on the side metal bezel */}
           <group position={[0.0645, -0.0198, 0.1246]}>
